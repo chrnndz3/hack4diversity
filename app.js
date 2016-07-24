@@ -21,3 +21,5 @@ app.use('/', index);
 //   res.status(200).send("hello");
 // });
 
+
+module.exports = app;
