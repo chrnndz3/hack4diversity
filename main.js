@@ -1,39 +1,39 @@
 /*****************************************************
-	Show the data based on the applications clicked
+  Show the data based on the applications clicked
 *****************************************************/
 
 function showRace(){
-	//globalMap.bubbles()
-	console.log("show race")
-	setCategory("Student Race/Ethnicity")
+  //globalMap.bubbles()
+  console.log("show race")
+  setCategory("Student Race/Ethnicity")
 
 
-	globalMap.bubbles([
-		 {name: 'Bubble 1', latitude: 40.7128, longitude: -74.0059, radius: 5, fillKey: 'WHITE'},
-		 {name: 'Bubble 2', latitude: 42.3314, longitude: -83.0458, radius: 5, fillKey: 'POC'},
-		 {name: 'Bubble 3', latitude: 37.7749, longitude: -122.431297, radius: 5, fillKey: 'GREEN'},
-		 {name: 'Bubble 4', latitude: 39.7749, longitude: -122.431297, radius: 5, fillKey: 'APIB'},
+  globalMap.bubbles([
+     {name: 'Bubble 1', latitude: 40.7128, longitude: -74.0059, radius: 5, fillKey: 'WHITE'},
+     {name: 'Bubble 2', latitude: 42.3314, longitude: -83.0458, radius: 5, fillKey: 'POC'},
+     {name: 'Bubble 3', latitude: 37.7749, longitude: -122.431297, radius: 5, fillKey: 'GREEN'},
+     {name: 'Bubble 4', latitude: 39.7749, longitude: -122.431297, radius: 5, fillKey: 'APIB'},
 
-		], {
-		 popupTemplate: function(geo, data) {
-		   return "<div class='hoverinfo'>Bubble for " + data.name + "";
-		 }
-	});
+    ], {
+     popupTemplate: function(geo, data) {
+       return "<div class='hoverinfo'>Bubble for " + data.name + "";
+     }
+  });
 }
 
 function showFunds(){
-	console.log("show funds")
-	setCategory("Funding per student")
+  console.log("show funds")
+  setCategory("Funding per student")
 }
 
 function showGradRates(){
-	console.log("grad rates")
-	setCategory("Graduation Rates by District")
+  console.log("grad rates")
+  setCategory("Graduation Rates by District")
 }
 
 function showAPPrograms(){
-	console.log("APIB")
-	setCategory("Districts that offer AP/IB Programs")
+  console.log("APIB")
+  setCategory("Districts that offer AP/IB Programs")
 }
 
 /*****************************************************
@@ -41,19 +41,19 @@ Click event handlers
 *****************************************************/
 
 $( "#race" ).click(function() {
-	showRace();
+  showRace();
 });
 
 $( "#funds" ).click(function() {
-	showFunds();
+  showFunds();
 });
 
 $( "#grad" ).click(function() {
-	showGradRates();
+  showGradRates();
 });
 
 $( "#ap" ).click(function() {
-	showAPPrograms();
+  showAPPrograms();
 });
 
 
@@ -62,7 +62,7 @@ $("#category").text(x);
 }
 
 // /*****************************************************
-// 	Zoom
+//  Zoom
 // *****************************************************/
 
 function Zoom(args) {
@@ -140,11 +140,11 @@ Zoom.prototype._shift = function(direction) {
     (center[1] - view.y) / view.k
   ];
 
-	if (direction == "reset") {
-  	view.k = 1;
+  if (direction == "reset") {
+    view.k = 1;
     this.scrolled = true;
   } else {
-  	view.k = this._getNextScale(direction);
+    view.k = this._getNextScale(direction);
   }
 
 l = [ translate0[0] * view.k + view.x, translate0[1] * view.k + view.y ];
@@ -189,7 +189,7 @@ Zoom.prototype._animate = function(translate, scale) {
     var iTranslate = d3.interpolate(d3Zoom.translate(), translate),
         iScale = d3.interpolate(d3Zoom.scale(), scale);
 
-		return function(t) {
+    return function(t) {
       _this._update(iTranslate(t), iScale(t));
     };
   });
@@ -254,30 +254,55 @@ Zoom.prototype._getNextScale = function(direction) {
 };
 
 function Datamap() {
-	this.$container = $("#map");
-	this.instance = new Datamaps({element: document.getElementById('map'),
-	    scope: 'usa',
-	    element: this.$container.get(0),
-	    fills: {
-		    'WHITE': '#FFCC75',
-		    'POC': '#844C14',
-		    'GREEN': '#0B7045',
-		    'APIB': '#00A077',
-        	defaultFill: '#98D9D5'
-    	},
-    	done: this._handleMapReady.bind(this)
-	});
+  this.$container = $("#map");
+  this.instance = new Datamaps({element: document.getElementById('map'),
+      scope: 'usa',
+      element: this.$container.get(0),
+      fills: {
+        'WHITE': '#FFCC75',
+        'POC': '#844C14',
+        'GREEN': '#0B7045',
+        'APIB': '#00A077',
+          defaultFill: '#98D9D5'
+      },
+      done: this._handleMapReady.bind(this)
+  });
 
-	globalMap = this.instance;
+  globalMap = this.instance;
 }
 
 Datamap.prototype._handleMapReady = function(datamap) {
-	this.zoom = new Zoom({
-  	$container: this.$container,
-  	datamap: datamap
+  this.zoom = new Zoom({
+    $container: this.$container,
+    datamap: datamap
   });
 }
 
 new Datamap();
 
+function mongoData() {
+// Retrieve
+var MongoClient = require('mongodb').MongoClient;
+
+// Connect to the db
+MongoClient.connect("mongodb://localhost:27017/exampleDb", function(err, db) {
+  if(err) { return console.dir(err); }
+
+  var collection = db.collection('test');
+  var docs = [{mykey:1}, {mykey:2}, {mykey:3}];
+
+  collection.insert(docs, {w:1}, function(err, result) {
+
+    collection.find().toArray(function(err, items) {});
+
+    var stream = collection.find({mykey:{$ne:2}}).stream();
+    stream.on("data", function(item) {});
+    stream.on("end", function() {});
+
+    collection.findOne({mykey:1}, function(err, item) {});
+
+  });
+});
+
+}
 
