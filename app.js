@@ -16,7 +16,7 @@ var server = http.createServer(app).listen(port, function(){
 var index = require('./routes/index');
 
 var bodyparser = require("body-parser");
-app.use(bodyparser);
+app.use(bodyparser.urlencoded({ extended: false }));
 app.use('/', index);
 
 // app.get("/", function(req, res, next){
