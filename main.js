@@ -6,6 +6,7 @@ var dataFetched = false;
 
 var bubbleCache = [];
 
+getAPData();
 /*****************************************************
   Cacheing
 *****************************************************/
@@ -36,6 +37,7 @@ $( "#grad" ).click(function() {
 
 $( "#ap" ).click(function() {
   showAPPrograms();
+  
 });
 
 
@@ -48,63 +50,18 @@ $("#category").text(x);
   Show the data based on the applications clicked
 *****************************************************/
 
-function showRace(){
-  var key = "RACE"
-  setCategory("Student Race/Ethnicity")
-
-  if(dataFetched) {
-    globalMap.bubbles(bubbleCache[key]);
-    return;
-  }
-
-  globalMap.bubbles(createBubbles(globalResults));
-}
-
-function raceBubbles(){
-  var bubbles = [];
-  for(var i = 0; i < myArr.length; i++) {
-    var node = myArr[i];
-    var hasAP = node.apCourses * 2;
-    var bubble = {name: node.name, latitude: node.northMost, longitude: node.eastMost, radius: hasAP, fillKey: 'RACE', borderWidth: 0.5};
-    //console.log(bubble)
-    bubbles.push(bubble);
-  }
-  globalMap.bubbles(bubbles);
-}
-
 function showFunds(){
   var key = "FUND"
   console.log("show funds")
-  setCategory("Funding per student")
+  setCategory("Money spent per student");
 
-  if(key in bubbleCache) {
-    globalMap.bubbles(bubbleCache[key]);
-    return;
-  }
-}
-
-function fundBubbles(){
-  var bubbles = [];
-  for(var i = 0; i < myArr.length; i++) {
-    var node = myArr[i];
-    var hasAP = node.apCourses * 2;
-    var bubble = {name: node.name, latitude: node.northMost, longitude: node.eastMost, radius: hasAP, fillKey: 'RACE', borderWidth: 0.5};
-    //console.log(bubble)
-    bubbles.push(bubble);
-  }
-  globalMap.bubbles(bubbles);
-}
-
-function showGradRates(){
-  var key = "GRAD"
-
-  console.log("grad rates")
-  setCategory("Graduation Rates by District")
-  if(key in eventCache) {
-    globalMap.bubbles(bubbleCache[key]);
-    return;
-  }
-  //todo:
+  globalMap.bubbles(moneyBubbles(globalResults), {
+    popupTemplate: function (geo, data) {
+      return ['<div class="hoverinfo">' + data.name + 
+      '<br/> Money spent per student:' + data.tSalary +
+      + '</div>'].join('');
+    }
+  });
 }
 
 function showAPPrograms(){
@@ -112,31 +69,75 @@ function showAPPrograms(){
 
   setCategory("Districts that offer AP/IB Programs")
   var key = "APIB"
-  if(dataFetched) {
-    globalMap.bubbles(bubbleCache[key]);
-    return;
-  }
 
-  globalMap.bubbles(createBubbles(globalResults));
+  globalMap.bubbles(apBubbles(globalResults), {
+    popupTemplate: function (geo, data) {
+      return ['<div class="hoverinfo">' + data.name + 
+      '<br/> White Students:' + data.wPercentage +
+      '<br/> Black Students:' + data.bPercentage +
+      '<br/> Hispanic Students:' + data.hPercentage
+      + '</div>'].join('');
+    }
+  });
+}
+
+function apBubbles(myArr){
+    var bubbles = [];
+    for(var i = 0; i < myArr.length; i++) {
+    var node = myArr[i];
+    var hasAP = node.apCourses * 2;
+    var wPercentage = ((parseFloat(node.aPMathWhiteM) + parseFloat(node.aPMathWhiteF))/(parseFloat(node.whiteM) + parseFloat(node.whiteF))) * 100;
+    var hPercentage = ((parseFloat(node.aPMathHispanicM) + parseFloat(node.aPMathHispanicF))/(parseFloat(node.hispanicM) + parseFloat(node.hispanicF))) * 100;
+    var bPercentage = ((parseFloat(node.aPMathBlackM) + parseFloat(node.aPMathBlackF))/(parseFloat(node.blackM) + parseFloat(node.blackF))) * 100;
+    var bubble = {name: node.name, 
+      latitude: node.northMost, 
+      longitude: node.eastMost, 
+      radius: 1, 
+      fillKey: 'APIB', 
+      borderWidth: 1,
+      wPercentage: wPercentage,
+      hPercentage: hPercentage,
+      bPercentage: bPercentage,
+      borderColor: 'APIB'
+    };
+    bubbles.push(bubble);
+  }
+  console.log(bubbles.length);
+  //globalMap.bubbles(bubbles);
+  return bubbles
+}
+
+function moneyBubbles(myArray){
+  var bubbles = [];
+    for(var i = 0; i < myArray.length; i++) {
+    var node = myArray[i];
+    var hasAP = node.apCourses * 2;
+
+    var tSalary = parseFloat(node.salary)/(parseFloat(node.whiteF) + parseFloat(node.whiteM) + parseFloat(node.hispanicM) + parseFloat(node.hispanicF) + parseFloat(node.blackF) + parseFloat(node.blackM));
+
+    var bubble = {name: node.name, 
+      latitude: node.northMost, 
+      longitude: node.eastMost, 
+      radius: 1, 
+      fillKey: 'GREEN', 
+      borderWidth: 1,
+      tSalary: tSalary,
+      borderColor: 'GREEN'
+    };
+    bubbles.push(bubble);
+  }
+  console.log(bubbles.length);
+  //globalMap.bubbles(bubbles);
+  return bubbles
 
 }
 
-function apBubbles(){
-    var bubbles = [];
-    for(var i = 0; i < myArr.length; i++) {
-      var node = myArr[i];
-      var hasAP = node.apCourses * 2;
-      radius = 0
-      if(hasAP < 1) {
-        radius = 0.5
-      } else {
-        break;
-      }
-    var bubble = {name: node.name, latitude: node.northMost, longitude: node.eastMost, radius: radius, fillKey: 'RACE', borderWidth: 0.5};
-    bubbles.push(bubble);
-  }
-  console.log(bubbles.length)
-  globalMap.bubbles(bubbles);
+function hoverText(geo, data){
+  return [']<div class"hoveinfo"> :' + data.name + 
+  '<br/> White Students:' + data.wPercentage +
+  '<br/> Black Students:' + data.bPercentage +
+  '<br/> Hispanic Students:' + data.hPercentage
+  + '</div>'].join('');
 
 }
 
@@ -144,8 +145,6 @@ function apBubbles(){
 /*******************************************
 DATABASE QUERIES
 *******************************************/
-
-getAPData();
 
 function getAPData(){
   var xmlhttp = new XMLHttpRequest();
@@ -156,48 +155,23 @@ function getAPData(){
       var myArr = JSON.parse(xmlhttp.responseText);
       globalResults = myArr;
       console.log(globalResults);
-
-      var bubbles = [];
-      for(var i = 0; i < myArr.length; i++) {
-        var node = myArr[i];
-        var hasAP = node.apCourses;
-        radius = 0
-        if(hasAP != 1) {
-          radius = 0.5
-        } else {
-          break;
-        }
-        var bubble = {name: node.name, latitude: node.northMost, longitude: node.westMost, radius: radius, fillKey: 'APIB', borderWidth: 0.5};
-        //console.log(bubble)
-        bubbles.push(bubble);
-      }
-      console.log(bubbles.length);
-      globalMap.bubbles(bubbles);
+      dataFetched = true
+     
+      // globalMap.bubbles(apBubbles(myArr), {
+      // popupTemplate: function (geo, data) {
+      //   return ['<div class="hoverinfo">' + data.name + 
+      //   '<br/> White Students:' + data.wPercentage +
+      //   '<br/> Black Students:' + data.bPercentage +
+      //   '<br/> Hispanic Students:' + data.hPercentage
+      //   + '</div>'].join('');
+      //   }
+      // });
     }
   };
 
   xmlhttp.open("GET", url, true);
   xmlhttp.send();
 }
-
-// function createBubbles(results){
-//   console.log(results)
-
-//   var bubbles = [];
-//   console.log(bubbles);
-
-//   for(var i = 0; i < results.length(); i++) {
-//     var node = results[i];
-//     var hasAP = node.apCourses * 3;
-//     var bubble = {name: node.name, latitude: node.northMost, longitude: node.westMost, radius: hasAP, fillKey: 'APIB'};
-//     //console.log(bubble)
-//     bubbles.push(bubble);
-//   }
-//   bubbles = globalBubbles;
-//   globalMap.bubbles(bubbles);
-//   //return bubbles;
-// }
-
 
 
 // /*****************************************************
@@ -401,7 +375,7 @@ function Datamap() {
         'WHITE': '#FFCC75',
         'POC': '#844C14',
         'GREEN': '#0B7045',
-        'APIB': '#00A077',
+        'APIB': '#FC502A',
           defaultFill: '#98D9D5'
       },
       done: this._handleMapReady.bind(this)
