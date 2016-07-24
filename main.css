@@ -7,23 +7,28 @@ h1{
 h3 {
 	font-family: 'Lato', sans-serif;
 	color: white;
-
 }
 p {
 	font-family: 'Lato', sans-serif;
 	color: white;
 
-
-
 }
 body{
 	text-align: center;
 	background-color: #FE5D49;
+	font-family: 'Lato', sans-serif;
+}
+
+#hoverinfo{
+	color: black;
+	font-family: 'Lato', sans-serif;
+}
+#zoom-info{
+	color: white;
 }
 
 #content{
 	width: 80vw;
-	background-color: blue;
 	margin: auto;
 }
 #map {
@@ -38,4 +43,32 @@ body{
 
 	float: left;
 	background-color: green;
+}
+#about {
+	clear: both;
+}
+
+.map-btn{
+	border: none;
+	background-color: Transparent;
+	cursor: pointer;
+
+}
+
+.zoom-button {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  border: none;
+  background: silver;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+}
+
+#zoom-info, #category {
+    color: white;
+  	display: inline-block;
+  	padding: 10px;
+  	vertical-align: left;
 }

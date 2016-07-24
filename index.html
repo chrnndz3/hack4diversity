@@ -3,8 +3,10 @@
 <link href='https://fonts.googleapis.com/css?family=Nunito' rel='stylesheet' type='text/css'>
 <head>
 	<title>Bridging the Gap : EDU INEQUALITY</title>
-	  <script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
-
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+	<script src="https://datamaps.github.io/scripts/datamaps.usa.min.js"></script>
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 </head>
 
 <body>
@@ -18,19 +20,19 @@
 		<div id="filters">
 			<p>This map shows school districts in the US. Hover over them to see more detail.
 				<br> <br>
-				<img style="float: top;" src="img/race.png"/> 
+				<button class="map-btn" id="race"><img style="float: top;" src="img/race.png"/></button>
 				<br>
 					Racial makeup
 				<br>
-				<img style="float: top;" src="img/dollar.png"/> 
+				<button class="map-btn" id="funds"><img style="float: top;" src="img/dollar.png"/></button>
 				<br>
 					Funding per Student
 				<br><br>
-				<img style="float: top;" src="img/grad.png"/> 
+				<button class="map-btn" id="grad"><img style="float: top;" src="img/grad.png"/></button>
 				<br>
 					Graduation Rates
 				<br><br>
-				<img style="float: top;" src="img/blackboard.png">
+				<button class="map-btn" id="ap"><img style="float: top;" src="img/blackboard.png"></button>
 				<br> 
 				AP/IB Programs
 				<br>
@@ -38,3 +40,20 @@
 		</div>
 	</div>
 </body>
+
+		<button class="zoom-button" data-zoom="reset">&#8962;</button>
+		<button class="zoom-button" data-zoom="out">-</button>
+		<button class="zoom-button" data-zoom="in">+</button>
+		<div id="zoom-info"></div>
+		<div id="category"></div>
+	</div>
+
+	<div id="about">
+		<br>
+		<h3> What is educational inequality?</h3>
+		<p>Who has access </p>
+	</div>
+</body>
+
+<script src="main.js"></script>
+
