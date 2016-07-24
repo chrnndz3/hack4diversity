@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var District = require('../models/districts');
 
-router.post('/populateDB', function( req, res, next) {
+router.post('/populateDB', function( req, res, next ) {
   
     District.updateDistricts(
       req.body.send_key, req.body.district_name, req.body.south, req.body.north, req.body.west, req.body.east, req.body.num_rows, function (err){
