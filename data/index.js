@@ -10,6 +10,8 @@ const LATITUDE = 7;
 const LONGITUDE = 8;
 const DISTRICT_NAME = 1;
 const POST_URL = 'https://agile-basin-90147.herokuapp.com/populateDB';
+const SCH_APENR_IND = 531;
+var APoffered = 0;
 
 function add_row(row, totals){
   var districtID = row[DISTRICT_ID];
@@ -23,11 +25,18 @@ function add_row(row, totals){
       east: parseFloat(row[LONGITUDE]),
       send_key: row[DISTRICT_NAME],
       district_name: row[DISTRICT_NAME],
+      APoffered: APoffered,
       num_rows:1
     };
+
+    var y = row[SCH_APENR_IND];
+    if(y == 'YES'){
+        APoffered = 1;
+    }
   }
   else {
     var totalDist = totals[districtID];
+
     var n = parseFloat(row[LATITUDE]);
     if(n < totalDist.north){
       totalDist.north = n;
@@ -48,6 +57,11 @@ function add_row(row, totals){
     if(e > totalDist.east)
     {
       totalDist.east = e;
+    }
+
+    var y = row[SCH_APENR_IND];
+    if(y == 'YES'){
+        APoffered = 1;
     }
 
     totalDist.num_rows++;
@@ -71,7 +85,7 @@ fs.readdir(__dirname + '/csv_files', function(err, files) {
         }))
         .on('finish', function() {
           sem.leave();
-          console.log("5 files");
+          //console.log("5 files");
           for(let key_districtID in totals){
             let district = totals[key_districtID];
             request.post(POST_URL, {
@@ -82,7 +96,8 @@ fs.readdir(__dirname + '/csv_files', function(err, files) {
                 east: district.east,
                 num_rows: district.num_rows,
                 district_name: district.district_name,
-                send_key: key_districtID
+                send_key: key_districtID,
+                APoffered: district.APoffered
               }
             }, function(error, response, body) {
               if (error) console.log(error);
