@@ -39,6 +39,9 @@ body{
 	float: left;
 	background-color: green;
 }
+#about {
+	clear: both;
+}
 
 .map-btn{
 	border: none;
