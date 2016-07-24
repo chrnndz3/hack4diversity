@@ -1,0 +1,41 @@
+h1{
+	font-family: 'Nunito', sans-serif;
+	font-size:50px;
+	color: white;
+}
+
+h3 {
+	font-family: 'Lato', sans-serif;
+	color: white;
+
+}
+p {
+	font-family: 'Lato', sans-serif;
+	color: white;
+
+
+
+}
+body{
+	text-align: center;
+	background-color: #FE5D49;
+}
+
+#content{
+	width: 80vw;
+	background-color: blue;
+	margin: auto;
+}
+#map {
+	width: 70%;
+	height: 80%;
+	float: left;
+	background-color: white;
+}
+#filters {
+	width: 30%;
+	height: 80%;
+
+	float: left;
+	background-color: green;
+}
