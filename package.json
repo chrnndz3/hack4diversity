@@ -19,6 +19,7 @@
   "homepage": "https://github.com/chrnndz3/hack4diversity#readme",
   "dependencies": {
     "csv": "^1.1.0",
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "request": "^2.74.0"
   }
 }

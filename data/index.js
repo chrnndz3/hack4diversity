@@ -2,13 +2,14 @@
 
 var csv = require('csv');
 var request = require('request');
+var semaphore = require('semaphore');
 var parser = csv.parse();
 var fs = require('fs');
 const DISTRICT_ID = 4;
 const LATITUDE = 7;
 const LONGITUDE = 8;
 const DISTRICT_NAME = 1;
-const POST_URL = '';
+const POST_URL = 'https://agile-basin-90147.herokuapp.com/populateDB';
 
 function add_row(row, totals){
   var districtID = row[DISTRICT_ID];
@@ -20,6 +21,7 @@ function add_row(row, totals){
       south: parseFloat(row[LATITUDE]),
       west: parseFloat(row[LONGITUDE]),
       east: parseFloat(row[LONGITUDE]),
+      send_key: row[DISTRICT_NAME],
       district_name: row[DISTRICT_NAME],
       num_rows:1
     };
@@ -55,31 +57,39 @@ function add_row(row, totals){
 fs.readdir(__dirname + '/csv_files', function(err, files) {
   if (err) return console.log('there was an error');
 
+  var sem = semaphore(5);
   for (let file of files) {
-    let totals = {};
-
-    var path = `${__dirname}/csv_files/${file}`;
-    var stream = fs.createReadStream(path);
-    stream.pipe(csv.parse())
-      .pipe(csv.transform(function(row) {
-        add_row(row, totals);
-      }));
-
-      for(let key_districtID in totals){
-        let district = totals[key_districtID];
-        request.post(POST_URL, {
-          form: {
-            north: district.north,
-            south: district.south,
-            west: district.west,
-            east: district.east,
-            num_rows: district.num_rows,
-            district_name: district.district_name,
-            send_key: key_districtID
+    sem.take(function(){
+      let totals = {};
+      let path = `${__dirname}/csv_files/${file}`;
+      //console.log('loading ' + path);
+      let stream = fs.createReadStream(path);
+      stream
+        .pipe(csv.parse())
+        .pipe(csv.transform(function(row) {
+          add_row(row, totals);
+        }))
+        .on('finish', function() {
+          sem.leave();
+          console.log("5 files");
+          for(let key_districtID in totals){
+            let district = totals[key_districtID];
+            request.post(POST_URL, {
+              form: {
+                north: district.north,
+                south: district.south,
+                west: district.west,
+                east: district.east,
+                num_rows: district.num_rows,
+                district_name: district.district_name,
+                send_key: key_districtID
+              }
+            }, function(error, response, body) {
+              if (error) console.log(error);
+            });
           }
-        }, function(error, respon error);
         });
-      }
-  }
+    });
+  }// end of for-loop
 
 });
