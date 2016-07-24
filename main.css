@@ -18,6 +18,9 @@ body{
 	background-color: #FE5D49;
 	font-family: 'Lato', sans-serif;
 }
+#credits{
+	font-size: 12;
+}
 
 #hoverinfo{
 	color: black;
@@ -46,6 +49,9 @@ body{
 }
 #about {
 	clear: both;
+	padding-left: 50px;
+	padding-right: 50px;
+
 }
 
 .map-btn{

@@ -1,39 +1,20 @@
+var globalMap;
+var globalBubbles;
+var globalResults;
+
+var bubbleCache = {};
+
+
 /*****************************************************
-  Show the data based on the applications clicked
+  Cacheing
 *****************************************************/
-
-function showRace(){
-  //globalMap.bubbles()
-  console.log("show race")
-  setCategory("Student Race/Ethnicity")
-
-
-  globalMap.bubbles([
-     {name: 'Bubble 1', latitude: 40.7128, longitude: -74.0059, radius: 5, fillKey: 'WHITE'},
-     {name: 'Bubble 2', latitude: 42.3314, longitude: -83.0458, radius: 5, fillKey: 'POC'},
-     {name: 'Bubble 3', latitude: 37.7749, longitude: -122.431297, radius: 5, fillKey: 'GREEN'},
-     {name: 'Bubble 4', latitude: 39.7749, longitude: -122.431297, radius: 5, fillKey: 'APIB'},
-
-    ], {
-     popupTemplate: function(geo, data) {
-       return "<div class='hoverinfo'>Bubble for " + data.name + "";
-     }
-  });
+function addToCache(key, events){
+  bubbleCache[key] = events; 
 }
 
-function showFunds(){
-  console.log("show funds")
-  setCategory("Funding per student")
-}
-
-function showGradRates(){
-  console.log("grad rates")
-  setCategory("Graduation Rates by District")
-}
-
-function showAPPrograms(){
-  console.log("APIB")
-  setCategory("Districts that offer AP/IB Programs")
+//TODO: Check to see if this is correct syntax
+function updateCache(key, event) {
+  bubbleCache[key].push(event);
 }
 
 /*****************************************************
@@ -59,7 +40,104 @@ $( "#ap" ).click(function() {
 
 function setCategory(x){
 $("#category").text(x);
+
 }
+
+/*****************************************************
+  Show the data based on the applications clicked
+*****************************************************/
+
+function showRace(){
+  var key = "RACE"
+  setCategory("Student Race/Ethnicity")
+
+  if(key in bubbleCache) {
+    globalMap.bubbles(bubbleCache[key]);
+    return;
+  }
+
+  globalMap.bubbles(createBubbles(globalResults));
+}
+
+function showFunds(){
+  var key = "FUND"
+  console.log("show funds")
+  setCategory("Funding per student")
+
+  if(key in bubbleCache) {
+    globalMap.bubbles(bubbleCache[key]);
+    return;
+  }
+}
+
+function showGradRates(){
+  var key = "GRAD"
+
+  console.log("grad rates")
+  setCategory("Graduation Rates by District")
+  if(key in eventCache) {
+    globalMap.bubbles(bubbleCache[key]);
+    return;
+  }
+  //todo:
+}
+
+function showAPPrograms(){
+  console.log("APIB")
+
+  setCategory("Districts that offer AP/IB Programs")
+  var key = "APIB"
+  if(key in eventCache) {
+    globalMap.bubbles(bubbleCache[key]);
+    return;
+  }
+
+  globalMap.bubbles(createBubbles(globalResults));
+
+}
+
+
+/*******************************************
+DATABASE QUERIES
+*******************************************/
+
+getData();
+
+function getData(){
+  var xmlhttp = new XMLHttpRequest();
+  var url = "https://agile-basin-90147.herokuapp.com/getDistrict";
+
+  xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+      var myArr = JSON.parse(xmlhttp.responseText).results;
+      globalResults = myArr;
+      globalMap.bubbles(createBubbles(myArr));
+    }
+  };
+
+  xmlhttp.open("GET", url, true);
+  xmlhttp.send();
+}
+
+function createBubbles(results){
+  console.log(results)
+
+  var bubbles = [];
+  console.log(bubbles);
+
+  for(var i = 0; i < results.length(); i++) {
+    var node = results[i];
+    var hasAP = node.apCourses * 3;
+    var bubble = {name: node.name, latitude: node.northMost, longitude: node.westMost, radius: hasAP, fillKey: 'APIB'};
+    //console.log(bubble)
+    bubbles.push(bubble);
+  }
+  bubbles = globalBubbles;
+  globalMap.bubbles(bubbles);
+  //return bubbles;
+}
+
+
 
 // /*****************************************************
 //  Zoom
@@ -279,20 +357,3 @@ Datamap.prototype._handleMapReady = function(datamap) {
 }
 
 new Datamap();
-
-mongoData();
-function mongoData() {
-// Retrieve
-var MongoClient = require('mongodb').MongoClient;
-
-// Connect to the db
-MongoClient.connect("mongodb://heroku_2mm2czgg:go0i1j0kiqpdasta9k7dh5899b@ds015700.mlab.com:15700/heroku_2mm2czgg", function(err, db) {
-  if(err) { return console.dir(err); }
-
-  var collection = db.collection('districts');
-  collection.find().toArray(function(err, items) {});
-
-});
-
-}
-
