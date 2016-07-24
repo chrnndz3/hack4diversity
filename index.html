@@ -1,0 +1,47 @@
+<link rel="stylesheet" href="main.css">
+<link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Nunito' rel='stylesheet' type='text/css'>
+<head>
+	<title>Bridging the Gap : EDU INEQUALITY</title>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+	<script src="http://datamaps.github.io/scripts/datamaps.usa.min.js"></script>
+</head>
+
+<body>
+	<img style="float: top;" src="img/EdInequality.png" />
+	<h1>Bridging the Gap</h1>
+	<h3>Visualizing contemporary education inequality in America</h3>
+
+	<div id="content">
+		<div id="map">
+		</div>
+		<div id="filters">
+			<p>This map shows school districts in the US. Hover over them to see more detail.
+				<br> <br>
+				<button class="map-btn"><img style="float: top;" src="img/race.png"/></button>
+				<br>
+					Racial makeup
+				<br>
+				<button class="map-btn"><img style="float: top;" src="img/dollar.png"/></button>
+				<br>
+					Funding per Student
+				<br><br>
+				<button class="map-btn"><img style="float: top;" src="img/grad.png"/></button>
+				<br>
+					Graduation Rates
+				<br><br>
+				<button class="map-btn"><img style="float: top;" src="img/blackboard.png"></button>
+				<br> 
+				AP/IB Programs
+				<br>
+			</p>
+		</div>
+	</div>
+</body>
+
+<script>
+    var map = new Datamap({
+    	element: document.getElementById('map'),
+    	scope: 'usa'});
+</script>
