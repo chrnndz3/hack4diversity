@@ -7,10 +7,11 @@ var districtSchema = mongoose.Schema({
   northMost: Number,
   westMost: Number,
   eastMost: Number,
-  numberOfSchools: Number
+  numberOfSchools: Number,
+  apCourses: Number
 });
 
-districtSchema.statics.updateDistricts = function(id, districtname, south, north, west, east, numschools, callback) {
+districtSchema.statics.updateDistricts = function(id, districtname, south, north, west, east, numschools, apOffered, callback) {
 
   District.findOne({districtID: id}, function (err, doc){
 
@@ -28,7 +29,8 @@ districtSchema.statics.updateDistricts = function(id, districtname, south, north
           northMost: north, 
           westMost: west,
           eastMost: east,
-          numberOfSchools: numschools
+          numberOfSchools: numschools,
+          apCourses: apOffered
         }, function (err) {
           if (err) {
             console.log("there's an error!");
@@ -48,13 +50,15 @@ districtSchema.statics.updateDistricts = function(id, districtname, south, north
         var lowLong = Math.min(doc.westMost, west);
         var highLong = Math.max(doc.eastMost, east);
         var schoolsum = doc.numberOfSchools + numschools;
+        var apExists = Math.max(doc.apCourses, apOffered);
 
         District.update({districtID:id}, {$set:{
           southMost: highLat,
           northMost: lowLat,
           westMost: lowLong,
           eastMost: highLong,
-          numberOfSchools: schoolsum
+          numberOfSchools: schoolsum,
+          apCourses: apExists
         }}, function (err) {
           if (err){
             console.log("Error updating");
