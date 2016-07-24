@@ -32,7 +32,7 @@ districtSchema.statics.updateDistricts = function(id, districtname, south, north
           westMost: west,
           eastMost: east,
           numberOfSchools: numschools,
-          apCourses: apOffered
+          apCourses: Number(apOffered)
         }, function (err) {
           if (err) {
             console.log("there's an error!");
@@ -52,7 +52,7 @@ districtSchema.statics.updateDistricts = function(id, districtname, south, north
         var lowLong = Math.min(doc.westMost, west);
         var highLong = Math.max(doc.eastMost, east);
         var schoolsum = doc.numberOfSchools + numschools;
-        var apExists = Math.max(doc.apCourses, apOffered);
+        var apExists = Math.max(doc.apCourses, Number(apOffered));
 
         District.update({districtID:id}, {$set:{
           southMost: highLat,
@@ -60,7 +60,7 @@ districtSchema.statics.updateDistricts = function(id, districtname, south, north
           westMost: lowLong,
           eastMost: highLong,
           numberOfSchools: schoolsum,
-          apCourses: apExists
+          apCourses: Number(apExists)
         }}, function (err) {
           if (err){
             console.log("Error updating");
