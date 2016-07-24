@@ -2,8 +2,9 @@ var globalMap;
 var globalBubbles;
 var globalResults;
 
-var bubbleCache = {};
+var dataFetched = false;
 
+var bubbleCache = [];
 
 /*****************************************************
   Cacheing
@@ -51,12 +52,24 @@ function showRace(){
   var key = "RACE"
   setCategory("Student Race/Ethnicity")
 
-  if(key in bubbleCache) {
+  if(dataFetched) {
     globalMap.bubbles(bubbleCache[key]);
     return;
   }
 
   globalMap.bubbles(createBubbles(globalResults));
+}
+
+function raceBubbles(){
+  var bubbles = [];
+  for(var i = 0; i < myArr.length; i++) {
+    var node = myArr[i];
+    var hasAP = node.apCourses * 2;
+    var bubble = {name: node.name, latitude: node.northMost, longitude: node.eastMost, radius: hasAP, fillKey: 'RACE', borderWidth: 0.5};
+    //console.log(bubble)
+    bubbles.push(bubble);
+  }
+  globalMap.bubbles(bubbles);
 }
 
 function showFunds(){
@@ -68,6 +81,18 @@ function showFunds(){
     globalMap.bubbles(bubbleCache[key]);
     return;
   }
+}
+
+function fundBubbles(){
+  var bubbles = [];
+  for(var i = 0; i < myArr.length; i++) {
+    var node = myArr[i];
+    var hasAP = node.apCourses * 2;
+    var bubble = {name: node.name, latitude: node.northMost, longitude: node.eastMost, radius: hasAP, fillKey: 'RACE', borderWidth: 0.5};
+    //console.log(bubble)
+    bubbles.push(bubble);
+  }
+  globalMap.bubbles(bubbles);
 }
 
 function showGradRates(){
@@ -87,7 +112,7 @@ function showAPPrograms(){
 
   setCategory("Districts that offer AP/IB Programs")
   var key = "APIB"
-  if(key in eventCache) {
+  if(dataFetched) {
     globalMap.bubbles(bubbleCache[key]);
     return;
   }
@@ -96,22 +121,58 @@ function showAPPrograms(){
 
 }
 
+function apBubbles(){
+    var bubbles = [];
+    for(var i = 0; i < myArr.length; i++) {
+      var node = myArr[i];
+      var hasAP = node.apCourses * 2;
+      radius = 0
+      if(hasAP < 1) {
+        radius = 0.5
+      } else {
+        break;
+      }
+    var bubble = {name: node.name, latitude: node.northMost, longitude: node.eastMost, radius: radius, fillKey: 'RACE', borderWidth: 0.5};
+    bubbles.push(bubble);
+  }
+  console.log(bubbles.length)
+  globalMap.bubbles(bubbles);
+
+}
+
 
 /*******************************************
 DATABASE QUERIES
 *******************************************/
 
-getData();
+getAPData();
 
-function getData(){
+function getAPData(){
   var xmlhttp = new XMLHttpRequest();
   var url = "https://agile-basin-90147.herokuapp.com/getDistrict";
 
   xmlhttp.onreadystatechange = function() {
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-      var myArr = JSON.parse(xmlhttp.responseText).results;
+      var myArr = JSON.parse(xmlhttp.responseText);
       globalResults = myArr;
-      globalMap.bubbles(createBubbles(myArr));
+      console.log(globalResults);
+
+      var bubbles = [];
+      for(var i = 0; i < myArr.length; i++) {
+        var node = myArr[i];
+        var hasAP = node.apCourses;
+        radius = 0
+        if(hasAP != 1) {
+          radius = 0.5
+        } else {
+          break;
+        }
+        var bubble = {name: node.name, latitude: node.northMost, longitude: node.westMost, radius: radius, fillKey: 'APIB', borderWidth: 0.5};
+        //console.log(bubble)
+        bubbles.push(bubble);
+      }
+      console.log(bubbles.length);
+      globalMap.bubbles(bubbles);
     }
   };
 
@@ -119,23 +180,23 @@ function getData(){
   xmlhttp.send();
 }
 
-function createBubbles(results){
-  console.log(results)
+// function createBubbles(results){
+//   console.log(results)
 
-  var bubbles = [];
-  console.log(bubbles);
+//   var bubbles = [];
+//   console.log(bubbles);
 
-  for(var i = 0; i < results.length(); i++) {
-    var node = results[i];
-    var hasAP = node.apCourses * 3;
-    var bubble = {name: node.name, latitude: node.northMost, longitude: node.westMost, radius: hasAP, fillKey: 'APIB'};
-    //console.log(bubble)
-    bubbles.push(bubble);
-  }
-  bubbles = globalBubbles;
-  globalMap.bubbles(bubbles);
-  //return bubbles;
-}
+//   for(var i = 0; i < results.length(); i++) {
+//     var node = results[i];
+//     var hasAP = node.apCourses * 3;
+//     var bubble = {name: node.name, latitude: node.northMost, longitude: node.westMost, radius: hasAP, fillKey: 'APIB'};
+//     //console.log(bubble)
+//     bubbles.push(bubble);
+//   }
+//   bubbles = globalBubbles;
+//   globalMap.bubbles(bubbles);
+//   //return bubbles;
+// }
 
 
 

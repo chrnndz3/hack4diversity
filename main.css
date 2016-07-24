@@ -31,19 +31,18 @@ body{
 }
 
 #content{
-	width: 80vw;
+	width: 90vw;
 	margin: auto;
 }
 #map {
-	width: 70%;
-	height: 80%;
+	width: 90%;
+	height: 90%;
 	float: left;
 	background-color: white;
 }
 #filters {
-	width: 30%;
-	height: 80%;
-
+	width: 10%;
+	height: 90%;
 	float: left;
 	background-color: green;
 }
