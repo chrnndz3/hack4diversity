@@ -13,6 +13,8 @@ var districtSchema = mongoose.Schema({
 
 districtSchema.statics.updateDistricts = function(id, districtname, south, north, west, east, numschools, apOffered, callback) {
 
+  console.log("apOffered!: ", apOffered);
+
   District.findOne({districtID: id}, function (err, doc){
 
     if(err) {
